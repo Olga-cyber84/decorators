@@ -1,12 +1,19 @@
 import os
+import datetime
 
 
 def logger(old_function):
-    ...
-
+    '''декортор, который записывает в файл "main.log" дату и время вызова функции, имя функции, аргументы, с которыми вызвалась и возвращаемое значение'''
     def new_function(*args, **kwargs):
-        ...
-
+        result = old_function(*args, **kwargs)
+        f_date = str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+        f_name = old_function.__name__
+        f_args = args
+        f_kwargs = kwargs
+        log = f'Дата и время вызова функции: {f_date}\nИмя функции: {f_name}\nПозиционные аргументы: {f_args}\nИменованные аргументы: {f_kwargs}\nВозвращаемое значение: {result}\n***\n'
+        with open('main.log', 'a', encoding='utf-8') as file:
+            file.write(log)
+        return result
     return new_function
 
 
@@ -40,7 +47,7 @@ def test_1():
     summator(4.3, b=2.2)
     summator(a=0, b=0)
 
-    with open(path) as log_file:
+    with open(path, encoding='utf-8') as log_file:
         log_file_content = log_file.read()
 
     assert 'summator' in log_file_content, 'должно записаться имя функции'
@@ -51,3 +58,4 @@ def test_1():
 
 if __name__ == '__main__':
     test_1()
+    print(help(logger))
